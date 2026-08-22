@@ -1,0 +1,54 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    permissions:
+        contents: write
+
+    steps:
+          - name: Checkout source code
+            uses: actions/checkout@v7
+
+          - name: Extract version number from Cargo.toml
+            id: version
+            shell: bash
+            run: |
+              echo "version=$(grep '^version' Cargo.toml | head -1 | sed 's/.*"\(.*\)".*/\1/')" >> $GITHUB_OUTPUT
+
+          - name: Install Rust toolchain
+            uses: dtolnay/rust-toolchain@stable
+
+          - name: Build release binary
+            run: cargo build --release
+
+          - name: Package release
+            shell: bash
+            run: |
+              mkdir rust_updater
+              cp target/release/rust_updater.exe rust_updater/
+              7z a rust_updater.zip ./rust_updater
+          
+          - name: Create GitHub Release
+            uses: softprops/action-gh-release@v3
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            with:
+              name: Rust Updater v${{ steps.version.outputs.version }}
+              tag_name: v${{ steps.version.outputs.version }}
+              files: rust_updater.zip
+              prerelease: false
+              body: |
+                ## 🔧 更新内容
+
+                - 添加版本信息
+                - 添加两个输入框
+                - 添加执行命令功能
+                
+                ## 📦 发布说明
+
+                - 当前版本: v${{ steps.version.outputs.version }}
