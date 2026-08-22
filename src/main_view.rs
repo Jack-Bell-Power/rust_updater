@@ -58,7 +58,6 @@ impl Render for MainView {
 
                                     Command::new("powershell")
                                         .args([
-                                            "-NoExit",
                                             "-Command",
                                             &format!(
                                                 "$env:RUSTUP_DIST_SERVER='{}'; \
@@ -110,7 +109,7 @@ impl MainView {
         });
 
         Self {
-            current_version: "1.97.0".to_owned(), //get_current_version(),
+            current_version: get_current_version(),
             latest_version: "unknown".to_owned(),
             dist_server,
             update_root,
