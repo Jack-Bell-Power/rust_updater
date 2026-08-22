@@ -1,3 +1,5 @@
+use rust_updater::run;
+
 fn main() {
-    println!("Hello, world!");
+    run();
 }
