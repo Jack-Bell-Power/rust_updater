@@ -1,5 +1,4 @@
-use gpui::{App, AppContext, Application, Bounds, WindowBounds, WindowOptions, px, size};
-use gpui_component::Root;
+use gpui_kit::{AppContext, Bounds, WindowBounds, WindowOptions, component::Root, px, size};
 
 use crate::main_view::MainView;
 
@@ -7,17 +6,19 @@ mod main_view;
 mod version;
 
 pub fn run() {
-    Application::new()
-        .with_assets(gpui_component_assets::Assets)
-        .run(|cx: &mut App| {
-            gpui_component::init(cx);
+    let app = gpui_kit::application().with_assets(gpui_kit::assets::Assets);
 
-            let bounds = Bounds::centered(None, size(px(600.0), px(200.0)), cx);
+    app.run(move |cx| {
+        // This must be called before using any GPUI Component features.
+        gpui_kit::init(cx);
+
+        cx.spawn(async move |cx| {
+            //let bounds = Bounds::centered(None, size(px(600.0), px(200.0)), cx);
 
             cx.open_window(
                 WindowOptions {
-                    window_bounds: Some(WindowBounds::Windowed(bounds)),
-                    titlebar: Some(gpui::TitlebarOptions {
+                    //window_bounds: Some(WindowBounds::Windowed(bounds)),
+                    titlebar: Some(gpui_kit::TitlebarOptions {
                         title: Some("Rust Updater".into()),
                         ..Default::default()
                     }),
@@ -30,6 +31,8 @@ pub fn run() {
                     cx.new(|cx| Root::new(view, window, cx))
                 },
             )
-            .unwrap();
-        });
+            .expect("Failed to open window");
+        })
+        .detach();
+    });
 }

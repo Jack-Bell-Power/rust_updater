@@ -1,14 +1,14 @@
 use std::process::Command;
 
-use gpui::{AppContext, Context, Entity, IntoElement, ParentElement, Render, Styled, Window, px};
-use gpui_component::{
-    Disableable,
-    button::Button,
-    form::{field, v_form},
-    h_flex,
-    input::{Input, InputState},
-    label::Label,
-    v_flex,
+use gpui_kit::{
+    AppContext, Context, Entity, IntoElement, ParentElement, Render, Styled, Window,
+    base::{Disableable, Input, h_flex, input::InputState, v_flex},
+    component::{
+        button::Button,
+        form::{field, v_form},
+        label::Label,
+    },
+    px,
 };
 
 use crate::version::{get_current_version, get_latest_version};
@@ -84,15 +84,13 @@ impl MainView {
                 .await
                 .unwrap_or_else(|_| "unknown".to_owned());
 
-            entity
-                .update(cx, |view, cx| {
-                    view.latest_version = version;
+            entity.update(cx, |view, cx| {
+                view.latest_version = version;
 
-                    view.can_update = view.version_compare();
+                view.can_update = view.version_compare();
 
-                    cx.notify();
-                })
-                .ok();
+                cx.notify();
+            });
         })
         .detach();
 

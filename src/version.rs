@@ -1,6 +1,6 @@
 use std::process::Command;
 
-use gpui::http_client::github::GithubRelease;
+use gpui_kit::http_client::github::GithubRelease;
 use reqwest::{Error, blocking::Client};
 
 pub fn get_current_version() -> String {
