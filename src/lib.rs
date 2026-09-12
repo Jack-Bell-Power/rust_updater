@@ -12,12 +12,12 @@ pub fn run() {
         // This must be called before using any GPUI Component features.
         gpui_kit::init(cx);
 
-        cx.spawn(async move |cx| {
-            //let bounds = Bounds::centered(None, size(px(600.0), px(200.0)), cx);
+        let bounds = Bounds::centered(None, size(px(600.0), px(200.0)), cx);
 
+        cx.spawn(async move |cx| {
             cx.open_window(
                 WindowOptions {
-                    //window_bounds: Some(WindowBounds::Windowed(bounds)),
+                    window_bounds: Some(WindowBounds::Windowed(bounds)),
                     titlebar: Some(gpui_kit::TitlebarOptions {
                         title: Some("Rust Updater".into()),
                         ..Default::default()
