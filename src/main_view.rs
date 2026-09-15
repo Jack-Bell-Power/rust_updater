@@ -2,10 +2,11 @@ use std::process::Command;
 
 use gpui_kit::{
     AppContext, Context, Entity, IntoElement, ParentElement, Render, Styled, Window,
-    base::{Disableable, Input, h_flex, input::InputState, v_flex},
+    base::{Disableable, h_flex, input::InputState, v_flex},
     component::{
         button::Button,
         form::{field, v_form},
+        input::Input,
         label::Label,
     },
     px,
@@ -25,18 +26,16 @@ impl Render for MainView {
     fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         v_form()
             .child(
-                field().label("Version").child(
+                field().label("Version").px(px(8.0)).child(
                     h_flex()
-                        .px(px(8.0))
                         .gap(px(20.0))
                         .child(Label::new("Current version:").secondary(&self.current_version))
                         .child(Label::new("latest version:").secondary(&self.latest_version)),
                 ),
             )
             .child(
-                field().label("Mirror URL").child(
+                field().label("Mirror URL").px(px(8.0)).child(
                     v_flex()
-                        .px(px(8.0))
                         .gap(px(5.0))
                         .child(Input::new(&self.dist_server))
                         .child(Input::new(&self.update_root))
