@@ -65,8 +65,11 @@ impl Render for MainView {
                                                 dist_server, update_root
                                             ),
                                         ])
-                                        .spawn()
+                                        .status()
                                         .expect("Failed to start PowerShell");
+
+                                    view.current_version = get_current_version();
+                                    cx.notify();
                                 })),
                         ),
                 ),
