@@ -1,13 +1,15 @@
+use std::str::FromStr;
+
 use windows_reactor::*;
 
 #[derive(Clone, Copy)]
 enum Message {
-    Increment,
-    Reset,
+    Update,
 }
 
 struct Counter {
-    count: i32,
+    dist_server: String,
+    update_root: String,
 }
 
 impl Component for Counter {
@@ -15,27 +17,35 @@ impl Component for Counter {
     type Message = Message;
 
     fn create(_input: &(), _context: &ComponentContext<Self>) -> Self {
-        Self { count: 0 }
-    }
-
-    fn update(&mut self, message: Message, _context: &ComponentContext<Self>) {
-        match message {
-            Message::Increment => self.count += 1,
-            Message::Reset => self.count = 0,
+        Self {
+            dist_server: String::from("https://mirrors.ustc.edu.cn/rust-static"),
+            update_root: String::from("https://mirrors.ustc.edu.cn/rust-static/rustup"),
         }
     }
 
-    fn view(&self, _input: &(), context: &mut ViewContext<Self>) -> View {
-        let content = StackPanel::new().spacing(8.0).children((
-            format!("Count: {}", self.count),
-            Button::new()
-                .on_click(context.message(Message::Increment))
-                .content("Increment"),
-            Button::new()
-                .on_click(context.message(Message::Reset))
-                .content("Reset"),
-        ));
+    // fn update(&mut self, message: Message, _context: &ComponentContext<Self>) {
+    //     match message {
 
+    //     }
+    // }
+
+    fn view(&self, _input: &(), context: &mut ViewContext<Self>) -> View {
+        let content = StackPanel::new()
+            .spacing(8.0)
+            .margin(Thickness::uniform(16.0))
+            .children((
+                TextBox::new(&self.dist_server).placeholder_text("Enter dist server url"),
+                TextBox::new(&self.update_root).placeholder_text("Enter update root url"),
+                Button::new()
+                    .content("Update")
+                    .horizontal_alignment(HorizontalAlignment::Stretch),
+            ));
+
+        context.window_visuals(
+            WindowVisuals::new()
+                .backdrop(WindowBackdrop::Mica)
+                .client_size(350.0, 500.0),
+        );
         context.window_frame("Rust Updater", content)
     }
 }
