@@ -1,6 +1,7 @@
 use std::process::Command;
 
 use reqwest::{Error, blocking::Client};
+use serde_json::Value;
 
 pub fn get_current_version() -> String {
     let output = Command::new("rustc")
@@ -24,7 +25,9 @@ pub fn get_latest_version() -> Result<String, Error> {
 
     let url = "https://api.github.com/repos/rust-lang/rust/releases/latest";
 
-    let release: GithubRelease = client.get(url).send()?.json()?;
+    let release: Value = client.get(url).send()?.json()?;
 
-    Ok(release.tag_name)
+    let tag_name = release["tag_name"].as_str().ok_or("Missing tag_name").unwrap_or("unknown");
+
+    Ok(tag_name.to_string())
 }

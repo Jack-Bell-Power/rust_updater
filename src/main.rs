@@ -1,12 +1,13 @@
 use windows_reactor::*;
 
-use crate::version::get_current_version;
+use crate::version::{get_current_version, get_latest_version};
 
 mod version;
 
 enum Message {
     Update,
     VersionChecked { current: String, latest: String },
+    Failed,
 }
 
 struct RustUpdater {
@@ -23,10 +24,10 @@ impl Component for RustUpdater {
     fn create(_input: &(), context: &ComponentContext<Self>) -> Self {
         let _task = context.spawn_background(move |_| {
             let current = get_current_version();
-            //let latest = get_latest_version(&server, &root);
-            let latest = String::from("latest");
-
-            Message::VersionChecked { current, latest }
+            match get_latest_version() {
+                Ok(latest) => Message::VersionChecked { current, latest },
+                Err(_) => Message::Failed,
+            }
         });
 
         Self {
@@ -39,10 +40,14 @@ impl Component for RustUpdater {
 
     fn update(&mut self, message: Message, _context: &ComponentContext<Self>) {
         match message {
-            Message::Update => {},
+            Message::Update => {}
             Message::VersionChecked { current, latest } => {
                 self.current_version = current;
                 self.latest_version = latest;
+            }
+            Message::Failed => {
+                self.current_version = String::from("Failed");
+                self.latest_version = String::from("Failed");
             }
         }
     }
